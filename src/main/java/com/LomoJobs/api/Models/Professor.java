@@ -3,12 +3,14 @@ package com.LomoJobs.api.Models;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
+@Table(name = "professor")
 public class Professor {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @OneToOne
     @JoinColumn(name = "user_id")
