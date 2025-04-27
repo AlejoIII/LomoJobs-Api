@@ -23,8 +23,16 @@ public class Job {
     private String level;
     private String location;
     private LocalDateTime createdAt = LocalDateTime.now();
+    private String description;
 
-    // Getters y Setters
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public UUID getId() {
         return id;

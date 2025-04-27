@@ -1,6 +1,7 @@
 package com.LomoJobs.api.Models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,7 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private Company company;
 
     @OneToOne(mappedBy = "user")

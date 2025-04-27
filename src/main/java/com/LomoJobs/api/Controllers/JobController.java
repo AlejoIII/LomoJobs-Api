@@ -3,11 +3,14 @@ package com.LomoJobs.api.Controllers;
 import com.LomoJobs.api.Models.CreateJobRequest;
 import com.LomoJobs.api.Models.Job;
 import com.LomoJobs.api.Models.Company;
+import com.LomoJobs.api.Models.User;
 import com.LomoJobs.api.Repositories.CompanyRepository;
+import com.LomoJobs.api.Repositories.UserRepository;
 import com.LomoJobs.api.Services.JobService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,27 +24,28 @@ public class JobController {
     private JobService jobService;
 
     @Autowired
-    private CompanyRepository companyRepository;
+    private UserRepository userRepository;
 
-    @PostMapping("/create")
-    public ResponseEntity<Job> createJob(@RequestBody CreateJobRequest request) {
-        Job job = new Job();
-        job.setTitle(request.getTitle());
-        job.setCategory(request.getCategory());
-        job.setLevel(request.getLevel());
-        job.setLocation(request.getLocation());
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyJobs(Authentication authentication) {
+        String email = authentication.getName();
 
-        // Aquí necesitas buscar la compañía por su ID
-        Company company = companyRepository.findById(request.getCompanyId())
-                .orElseThrow(() -> new RuntimeException("Compañía no encontrada"));
-        job.setCompany(company);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        return ResponseEntity.ok(jobService.createJob(job));
+        if (user.getCompany() == null) {
+            return ResponseEntity.status(403).body("Este usuario no tiene empresa asociada");
+        }
+
+        List<Job> jobs = jobService.getJobsByCompany(user.getCompany());
+        return ResponseEntity.ok(jobs);
     }
 
 
     @GetMapping
-    public List<Job> getAllJobs() {
+    public List<Job> getAllJobs(Authentication authentication) {
+        System.out.println("Usuario autenticado: " + authentication.getName());
+        System.out.println("Roles: " + authentication.getAuthorities());
         return jobService.getAllJobs();
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -18,6 +20,8 @@ public class AuthController {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -28,9 +32,12 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Contraseña incorrecta");
         }
 
-        String token = JwtUtil.generateToken(user);
-        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getRole().name()));
+        String token = jwtUtil.generateToken(user);
+        UUID companyId = user.getCompany() != null ? user.getCompany().getId() : null;
+
+        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getRole().name(), companyId));
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
@@ -48,6 +55,4 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado correctamente");
     }
-
-
 }

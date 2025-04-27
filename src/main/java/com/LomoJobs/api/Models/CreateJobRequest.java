@@ -8,6 +8,15 @@ public class CreateJobRequest {
     private String level;
     private String location;
     private UUID companyId;
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public void setTitle(String title) {
         this.title = title;
