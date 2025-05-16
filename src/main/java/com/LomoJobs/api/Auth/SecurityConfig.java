@@ -35,6 +35,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/companies/*/jobs/*").hasRole("EMPRESA")
                         .requestMatchers(HttpMethod.DELETE, "/api/companies/{companyId}/jobs/{jobId}").hasRole("EMPRESA")
                         .requestMatchers("/api/users/**", "/api/companies/**").authenticated()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
 
